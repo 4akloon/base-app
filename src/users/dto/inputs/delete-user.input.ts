@@ -6,5 +6,4 @@ export class DeleteUserInput {
   @Field()
   @IsNotEmpty()
   id: number;
-
 }

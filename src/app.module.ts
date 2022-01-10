@@ -20,7 +20,7 @@ import { UsersModule } from './users/users.module';
       database: process.env.POSTGRES_DB,
       models: [User],
       autoLoadModels: true,
-      logging: false,
+
     }),
     GraphQLModule.forRoot({
       debug: true,

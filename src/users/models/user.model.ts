@@ -10,18 +10,18 @@ export class User extends Model<User, CreateUserInput> {
   id: number;
 
   @Field()
-  @Column({ type: DataType.STRING, unique: true, })
-  email: string;
+  @Column({ type: DataType.INTEGER, unique: true, })
+  phone: number;
 
-  @Field(() => Int)
-  @Column({ type: DataType.INTEGER, defaultValue: 10 })
-  age: number;
-
-  @Field({ nullable: true })
-  @Column({ type: DataType.BOOLEAN, defaultValue: false, allowNull: true })
-  isSubscribed?: boolean;
+  @Field()
+  @Column({ type: DataType.STRING, })
+  firstName: string;
 
   @Field({ nullable: true })
+  @Column({ type: DataType.STRING, allowNull: true })
+  lastName?: string;
+
+  @Field()
   @Column({ type: DataType.STRING, })
   password: string;
 }

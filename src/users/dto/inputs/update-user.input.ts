@@ -9,10 +9,9 @@ export class UpdateUserInput {
 
   @Field()
   @IsOptional()
-  @IsNotEmpty()
-  age?: number;
+  firstName?: string;
 
   @Field()
   @IsOptional()
-  isSubscribed?: boolean;
+  lastName?: string;
 }

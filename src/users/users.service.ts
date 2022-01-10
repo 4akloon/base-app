@@ -16,17 +16,15 @@ export class UsersService {
   }
 
   async updateUser(updateUserData: UpdateUserInput): Promise<User> {
-    await this.userRepository.update({
-      age: updateUserData.age,
-      isSubscribed: updateUserData.isSubscribed,
-    }, {
+    const { id, ...data } = updateUserData;
+    await this.userRepository.update(data, {
       where: {
-        id: updateUserData.id,
+        id: id,
       },
     },
     );
 
-    return this.userRepository.findOne({ where: { id: updateUserData.id } });
+    return this.userRepository.findOne({ where: { id: id } });
   }
 
   async getUser(getUserArgs: GetUserArgs): Promise<User> {
