@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
+import { InjectModel } from '@nestjs/sequelize';
 import { GetUserArgs } from './dto/args/get-user.args';
-import { GetUsersArgs } from './dto/args/get-users.args';
 import { CreateUserInput } from './dto/inputs/create-user.input';
 import { DeleteUserInput } from './dto/inputs/delete-user.input';
 import { UpdateUserInput } from './dto/inputs/update-user.input';
@@ -9,42 +8,37 @@ import { User } from './models/user.model';
 
 @Injectable()
 export class UsersService {
-  private users: User[] = [];
 
-  public createUser(createUserData: CreateUserInput): User {
-    const user: User = {
-      id: uuidv4(),
-      ...createUserData,
-    }
+  constructor(@InjectModel(User) private userRepository: typeof User) { }
 
-    this.users.push(user);
-
-    return user;
+  async createUser(createUserData: CreateUserInput): Promise<User> {
+    return this.userRepository.create(createUserData);
   }
 
-  public updateUser(updateUserData: UpdateUserInput): User {
-    const user = this.users.find(user => user.id === updateUserData.id);
+  async updateUser(updateUserData: UpdateUserInput): Promise<User> {
+    await this.userRepository.update({
+      age: updateUserData.age,
+      isSubscribed: updateUserData.isSubscribed,
+    }, {
+      where: {
+        id: updateUserData.id,
+      },
+    },
+    );
 
-    Object.assign(user, updateUserData);
-
-    return user;
+    return this.userRepository.findOne({ where: { id: updateUserData.id } });
   }
 
-  public getUser(getUserArgs: GetUserArgs): User {
-    return this.users.find(user => user.id === getUserArgs.id);
+  async getUser(getUserArgs: GetUserArgs): Promise<User> {
+    return this.userRepository.findOne({ where: getUserArgs });
   }
 
-  public getUsers(getUsersArgs: GetUsersArgs): User[] {
-    return getUsersArgs.ids.map(userId => this.getUser({ id: userId }))
+  async getUsers(): Promise<User[]> {
+    return this.userRepository.findAll();
   }
 
-  public deleteUser(deleteUserData: DeleteUserInput): User {
-    const userIndex = this.users.findIndex(user => user.id == deleteUserData.id);
-
-    const user = this.users[userIndex];
-
-    this.users.splice(userIndex);
-
-    return user;
+  async deleteUser(deleteUserData: DeleteUserInput): Promise<boolean> {
+    const count = await this.userRepository.destroy({ where: deleteUserData });
+    return count === 1;
   }
 }
